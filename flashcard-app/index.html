@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Flashcard App with Spaced Repetition</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				max-width: 800px;
+				margin: 0 auto;
+				padding: 20px;
+			}
+			.card {
+				border: 1px solid #ccc;
+				padding: 20px;
+				margin-bottom: 20px;
+				cursor: pointer;
+			}
+			.hidden {
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Flashcard App with Spaced Repetition</h1>
+
+		<div id="addCard">
+			<h2>Add New Card</h2>
+			<input type="text" id="question" placeholder="Question" />
+			<input type="text" id="answer" placeholder="Answer" />
+			<input type="text" id="category" placeholder="Category" />
+			<button onclick="addCard()">Add Card</button>
+		</div>
+
+		<div id="viewCards">
+			<h2>Review Cards</h2>
+			<div id="currentCard" class="card" onclick="flipCard()">
+				<div id="cardQuestion"></div>
+				<div id="cardAnswer" class="hidden"></div>
+			</div>
+			<button onclick="answerCard(true)">Correct</button>
+			<button onclick="answerCard(false)">Incorrect</button>
+			<button onclick="nextCard()">Next</button>
+		</div>
+
+		<script>
+			let cards = [];
+			let currentCardIndex = 0;
+
+			async function loadCards() {
+				try {
+					const response = await fetch("flashcards.json");
+					const data = await response.json();
+					cards = data.cards;
+					updateCardView();
+				} catch (error) {
+					console.error("Error loading cards:", error);
+				}
+			}
+
+			async function saveCards() {
+				try {
+					const response = await fetch("flashcards.json", {
+						method: "PUT",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({ cards: cards }),
+					});
+					if (!response.ok) {
+						throw new Error("Failed to save cards");
+					}
+				} catch (error) {
+					console.error("Error saving cards:", error);
+				}
+			}
+
+			function addCard() {
+				const question = document.getElementById("question").value;
+				const answer = document.getElementById("answer").value;
+				const category = document.getElementById("category").value;
+
+				if (question && answer) {
+					const newCard = {
+						id: Date.now(),
+						question: question,
+						answer: answer,
+						category: category,
+						lastReviewed: new Date().toISOString(),
+						nextReview: new Date().toISOString(),
+						interval: 1,
+						easeFactor: 2.5,
+					};
+
+					cards.push(newCard);
+					saveCards();
+					updateCardView();
+					clearInputs();
+				}
+			}
+
+			function clearInputs() {
+				document.getElementById("question").value = "";
+				document.getElementById("answer").value = "";
+				document.getElementById("category").value = "";
+			}
+
+			function updateCardView() {
+				const dueCards = cards.filter((card) => new Date(card.nextReview) <= new Date());
+				if (dueCards.length > 0) {
+					const card = dueCards[currentCardIndex % dueCards.length];
+					document.getElementById("cardQuestion").textContent = card.question;
+					document.getElementById("cardAnswer").textContent = card.answer;
+					document.getElementById("cardAnswer").classList.add("hidden");
+				} else {
+					document.getElementById("cardQuestion").textContent = "No cards due for review";
+					document.getElementById("cardAnswer").textContent = "";
+				}
+			}
+
+			function flipCard() {
+				document.getElementById("cardAnswer").classList.toggle("hidden");
+			}
+
+			function answerCard(correct) {
+				const dueCards = cards.filter((card) => new Date(card.nextReview) <= new Date());
+				if (dueCards.length > 0) {
+					const cardIndex = cards.findIndex((card) => card.id === dueCards[currentCardIndex % dueCards.length].id);
+					const card = cards[cardIndex];
+
+					if (correct) {
+						card.interval = Math.round(card.interval * card.easeFactor);
+						card.easeFactor += 0.1;
+					} else {
+						card.interval = 1;
+						card.easeFactor = Math.max(1.3, card.easeFactor - 0.2);
+					}
+
+					card.lastReviewed = new Date().toISOString();
+					card.nextReview = new Date(Date.now() + card.interval * 24 * 60 * 60 * 1000).toISOString();
+
+					saveCards();
+					nextCard();
+				}
+			}
+
+			function nextCard() {
+				currentCardIndex++;
+				updateCardView();
+			}
+
+			// Load cards when the page loads
+			loadCards();
+		</script>
+	</body>
+</html>

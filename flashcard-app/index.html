@@ -33,7 +33,7 @@
 			<input type="text" id="question" placeholder="Question" />
 			<input type="text" id="answer" placeholder="Answer" />
 			<input type="text" id="category" placeholder="Category" />
-			<button onclick="addCard()">Add Card</button>
+			<button onclick="addCard()" class="btn btn-secondary">Add Card</button>
 		</div>
 
 		<div id="viewCards">
@@ -42,9 +42,9 @@
 				<div id="cardQuestion"></div>
 				<div id="cardAnswer" class="hidden"></div>
 			</div>
-			<button onclick="answerCard(true)">Correct</button>
-			<button onclick="answerCard(false)">Incorrect</button>
-			<button onclick="nextCard()">Next</button>
+			<button onclick="answerCard(true)" class="btn btn-secondary">Correct</button>
+			<button onclick="answerCard(false)" class="btn btn-secondary">Incorrect</button>
+			<button onclick="nextCard()" class="btn btn-secondary">Next</button>
 		</div>
 	</div>
 

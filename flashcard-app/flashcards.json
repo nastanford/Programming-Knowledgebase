@@ -1,5 +1,5 @@
 {
-  id: unique_identifier,
+  id: 1,
   question: "How to create an array in ColdFusion using literal notation?",
   answer: "Use square brackets: a = []",
   category: "ColdFusion",
@@ -7,7 +7,7 @@
   nextReview: timestamp
 },
 {
-  id: unique_identifier,
+  id: 2,
   question: "How to create a structure in ColdFusion using literal notation?",
   answer: "Use Curly Braces: a = {}",
   category: "ColdFusion",

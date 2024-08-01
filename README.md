@@ -23,11 +23,11 @@ The flashcard app is a web-based tool to help memorize programming concepts usin
 4. Use the "Export Data" button to save your progress
 5. Use the "Import Data" button to load previously saved data
 
-You can access the app online at: https://yourusername.github.io/Programming-Knowledgebase/flashcard-app/
+You can access the app online at: https://nastanford.github.io/Programming-Knowledgebase/flashcard-app/
 
 ## Contributing
 
-If you'd like to contribute to this knowledgebase, please read the `CONTRIBUTING.md` file for guidelines.
+If you'd like to contribute to this knowledge base, please read the `CONTRIBUTING.md` file for guidelines.
 
 ## License
 
